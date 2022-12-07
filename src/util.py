@@ -19,4 +19,3 @@ def ReadNii(path):
         img = sitk.GetArrayFromImage(img_nii)
         showNii(img)
 
-ReadNii(path)
