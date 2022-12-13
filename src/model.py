@@ -4,7 +4,6 @@ import oneflow.nn.functional as F
 
 
 class _DenseLayer(nn.Sequential):
-    """Origninated from https://github.com/pyflow/vision/blob/master/flowvision/models/densenet.py"""
 
     def __init__(self, num_input_features, growth_rate, bn_size, drop_rate):
         super(_DenseLayer, self).__init__()
@@ -23,7 +22,6 @@ class _DenseLayer(nn.Sequential):
 
 
 class _DenseBlock(nn.Sequential):
-    """Origninated from https://github.com/pyflow/vision/blob/master/flowvision/models/densenet.py"""
 
     def __init__(self, num_layers, num_input_features, bn_size, growth_rate, drop_rate):
         super(_DenseBlock, self).__init__()
@@ -36,16 +34,6 @@ class _DenseBlock(nn.Sequential):
 
 
 class Generator(nn.Module):
-    """Origninated from Densenet-BC model class, based on
-    `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_
-    Args:
-        ngpu (int) - how many GPU you use.
-        growth_rate (int) - how many filters to add each layer (`k` in paper)
-        block_config (list of 4 ints) - how many layers in each pooling block
-        bn_size (int) - multiplicative factor for number of bottle neck layers
-          (i.e. bn_size * k features in the bottleneck layer)
-        drop_rate (float) - dropout rate after each dense layer
-    """
 
     def __init__(self, ngpu, growth_rate=16, block_config=(4, 4, 4, 4),
                  bn_size=2, drop_rate=0):
@@ -107,58 +95,3 @@ class Generator(nn.Module):
         features = flow.cat([features, out], 1)
         out = self.recon(features)
         return out
-
-
-# class Discriminator(nn.Module):
-#     """Origninated from SRGAN paper, see `"Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network" <https://arxiv.org/abs/1609.04802>`_
-#     Args:
-#         ngpu (int) - how many GPU you use.
-#         cube_size (int) - the size of one patch (eg. 64 means a cubic patch with size: 64x64x64), this is exact the size of the model input.
-#     """
-#
-#     def __init__(self, ngpu, cube_size=64):
-#         super(Discriminator, self).__init__()
-#         num_features = 64
-#         self.gpu = ngpu
-#         self.main = nn.Sequential(
-#             nn.Conv3d(1, num_features, kernel_size=3, padding=1),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(num_features, num_features, kernel_size=3, stride=2, padding=1),
-#             nn.LayerNorm([num_features, cube_size // 2, cube_size // 2, cube_size // 2]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(num_features, 2 * num_features, kernel_size=3, padding=1),
-#             nn.LayerNorm([2 * num_features, cube_size // 2, cube_size // 2, cube_size // 2]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(2 * num_features, 2 * num_features, kernel_size=3, stride=2, padding=1),
-#             nn.LayerNorm([2 * num_features, cube_size // 4, cube_size // 4, cube_size // 4]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(2 * num_features, 4 * num_features, kernel_size=3, padding=1),
-#             nn.LayerNorm([4 * num_features, cube_size // 4, cube_size // 4, cube_size // 4]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(4 * num_features, 4 * num_features, kernel_size=3, stride=2, padding=1),
-#             nn.LayerNorm([4 * num_features, cube_size // 8, cube_size // 8, cube_size // 8]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(4 * num_features, 8 * num_features, kernel_size=3, padding=1),
-#             nn.LayerNorm([8 * num_features, cube_size // 8, cube_size // 8, cube_size // 8]),
-#             nn.LeakyReLU(1),
-#
-#             nn.Conv3d(8 * num_features, 8 * num_features, kernel_size=3, stride=2, padding=1),
-#             nn.LayerNorm([8 * num_features, cube_size // 16, cube_size // 16, cube_size // 16]),
-#             nn.LeakyReLU(1),
-#
-#             # different from the original SRGAN, we replaced the FC layers by global averaging pooling and convolution layers.
-#             nn.AdaptiveAvgPool3d(1),
-#             nn.Conv3d(8 * num_features, 16 * num_features, kernel_size=1),
-#             nn.LeakyReLU(1),
-#             nn.Conv3d(16 * num_features, 1, kernel_size=1)
-#         )
-#
-#     def forward(self, x):
-#         out = self.main(x)
-#         return out.view(out.size()[0])

@@ -40,9 +40,6 @@ os.environ['CUDA_VISIBLE_DEVICES']='0,1,2,3'
 device = flow.device("cuda:1" if (flow.cuda.is_available() and ngpu > 0) else "cpu")
 # Create the generator
 
-
-# Apply the weights_init function to randomly initialize all weights
-#  to mean=0, stdev=0.2.
 train_split= 0.7
 dataset = CustomDatasetFromCSV(id_csv,vm_PATH)
 dataset_size = len(dataset)
